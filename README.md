@@ -1,6 +1,6 @@
 ﻿# k8s-autodeploy-platform
  
-#** 1 — Core infrastructure**
+#**1. Core infrastructure**
 - [] Dockerize my Frontend and Backend
 - [] Deploying basic Kubernetes
 - [] Getting a local cluster working
