@@ -16,5 +16,5 @@ app.get("/api", (req, res) => {
 
 // Basic Port Listener
 app.listen(PORT, () => {
-    console.log('Server operating on', {PORT} );
+    console.log('Server operating on port:', PORT );
 });
