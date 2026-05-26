@@ -1,9 +1,10 @@
 const express = require("express");
 const crypto = require("crypto");
 globalThis.crypto = crypto.webcrypto;
-const { MongoClient } = require("mongodb");
+const { MongoClient, ObjectId } = require("mongodb");
 
 const app = express();
+const data = app.use(express.json());
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGO_URI;
 
@@ -24,6 +25,70 @@ app.get("/db", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+app.post("/users", async (req, res) => {
+    try {
+        const user = req.body;
+
+        const collection = client.db().collection("users");
+
+        await collection.insertOne(user);
+
+        res.json({ message: "User added successfully" });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.put("/users/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const collection = client.db().collection("users");
+
+        const result = await collection.updateOne(
+            { _id: new ObjectId(id) }, 
+            { $set: req.body }
+        );
+        
+        res.json({ message: "User updated", result });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.delete("/users/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const collection = client.db().collection("users");
+
+        const result = await collection.deleteOne({
+            _id: new ObjectId(id)
+        });
+
+        res.json({ message: "User deleted", result });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get("/users", async (req, res) => {
+    try {
+        const collection = client.db().collection("users");
+
+        const users = await collection.find({}).toArray();
+
+        res.json(users);
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
 
 // Basic API route
 app.get("/api", (req, res) => {
@@ -46,3 +111,4 @@ async function startServer() {
 }
 
 startServer();
+
