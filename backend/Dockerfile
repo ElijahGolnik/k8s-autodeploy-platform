@@ -1,6 +1,6 @@
 # Stage 1: Build environment
 # Using node image as builder
-FROM node:18-alpine AS build
+FROM node:18-slim AS build
 
 # Working dir
 WORKDIR /app
@@ -15,10 +15,10 @@ RUN npm ci --omit=dev
 COPY server.js .
 
 # Stage 2: Runtime environment
-FROM node:18-alpine
+FROM node:18-slim
 
 # Create user again in secondary stage
-RUN adduser -D appuser
+RUN adduser appuser
 
 # Secondary working dir
 WORKDIR /app
