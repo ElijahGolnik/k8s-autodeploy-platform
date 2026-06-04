@@ -28,6 +28,9 @@ jobs:
         - name: Set up kubectl
           uses: azure/setup-kubectl@v3
 
+        - name: Set Kubeconfig
+          run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+
         - name: Deploy to Kubernetes
           run: |
             kubectl apply -f backend/k8s/
