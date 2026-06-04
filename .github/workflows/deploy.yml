@@ -35,7 +35,7 @@ jobs:
 
         - name: Deploy to Kubernetes
           run: |
-            kubectl apply -f backend/
+            kubectl apply -f k8s/base/
             kubectl rollout restart deployment backend
 
         
