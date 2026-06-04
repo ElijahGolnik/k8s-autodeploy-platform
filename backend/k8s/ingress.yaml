@@ -13,4 +13,4 @@ spec:
               service:
                 name: backend
                 port:
-                  number: 30007
+                  number: 5000
