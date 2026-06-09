@@ -19,11 +19,14 @@ jobs:
             username: ${{ secrets.DOCKER_USERNAME }}
             password: ${{ secrets.DOCKER_PASSWORD }}
 
-        - name: Build Docker image
-          run: docker build -t elijahgolnik/backend-multistage:latest ./backend
+        - name: Set image tag
+          run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+
+        - name: Build Docker Image
+          run: docker build -t elijahgolnik/backend-multistage:${IMAGE_TAG} ./backend
 
         - name: Push image
-          run: docker push elijahgolnik/backend-multistage:latest
+          run: docker push elijahgolnik/backend-multistage:${IMAGE_TAG}
 
         - name: Set up kubectl
           uses: azure/setup-kubectl@v3
@@ -31,9 +34,11 @@ jobs:
         - name: Set Kubeconfig
           run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
 
-        - name: Deploy to Kubernetes
+        - name: Update Kubernetes Deployment Image
           run: |
-            kubectl apply -f backend/k8s/
-            kubectl rollout restart deployment backend
+            kubectl set image deployment/backend backend=elijahgolnik/backend-multistage:${IMAGE_TAG}
+
+        
+            
 
         
