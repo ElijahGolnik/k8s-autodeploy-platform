@@ -28,6 +28,12 @@ jobs:
         - name: Push image
           run: docker push elijahgolnik/backend-multistage:${IMAGE_TAG}
 
+        - name: Build Frontend Image
+          run: docker build -t elijahgolnik/frontend:${IMAGE_TAG} ./frontend
+
+        - name: Push Frontend Image
+          run: docker push elijahgolnik/frontend:${IMAGE_TAG}
+
         - name: Set up kubectl
           uses: azure/setup-kubectl@v3
 
