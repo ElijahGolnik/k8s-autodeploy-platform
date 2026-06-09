@@ -36,6 +36,7 @@ jobs:
 
         - name: Update Kubernetes Deployment Image
           run: |
+            kubectl apply -f backend/k8s/
             kubectl set image deployment/backend backend=elijahgolnik/backend-multistage:${IMAGE_TAG}
 
         
