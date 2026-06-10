@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: elijahgolnik/backend-multistage:latest
+          image: elijahgolnik/backend-multistage:${IMAGE_TAG}
           ports:
             - containerPort: 5000
 
