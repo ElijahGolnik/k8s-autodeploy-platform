@@ -1,9 +1,9 @@
 ﻿### k8s-autodeploy-platform
  
 ## 1. Core infrastructure
-* [ ] Dockerize my Frontend and Backend
-* [ ] Deploying basic Kubernetes
-* [ ] Getting a local cluster working
+* [x] Dockerize my Frontend and Backend
+* [x] Deploying basic Kubernetes
+* [x] Getting a local cluster working
 
 ## 2. Networking and Services
 * [ ] Implement Kuber Services and DNS communication
@@ -16,9 +16,9 @@
 * [ ] Implementing SHA256 Version tagging rather than using the "Latest" tag
 
 ## 4. Production Readiness
-* [ ] Implementing Ingress
-* [ ] Using simple YAML scripts to perform pod health checks and replacements
-* [ ] Implementing consistent rolling updates without downtime
+* [x] Implementing Ingress
+* [x] Using simple YAML scripts to perform pod health checks and replacements
+* [x] Implementing consistent rolling updates without downtime
 
 ## 5. Advanced Automation
 * [ ] Using Python as my main orchestrator
