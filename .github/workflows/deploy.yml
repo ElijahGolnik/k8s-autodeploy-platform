@@ -44,9 +44,17 @@ jobs:
         run: |
           docker push elijahgolnik/frontend:${IMAGE_TAG}
 
+      
+
       # Configure Kubernetes
       - name: Set up kubectl
         uses: azure/setup-kubectl@v4
+
+      - name: Verify Kubernetes tools
+        run: |
+          kubectl config current-context
+          kubectl get nodes
+          kustomize version
 
       - name: Set Kubeconfig
         run: echo "KUBECONFIG=$HOME/.kube/config" >> "$GITHUB_ENV"
@@ -58,31 +66,28 @@ jobs:
           kubectl get nodes
           kubectl get deployments -A
 
-      # Apply configuration changes
-      - name: Apply Kubernetes Manifests
+      - name: Configure deployment images
         run: |
-          kubectl apply -f backend/k8s/
-          kubectl apply -f frontend/k8s/
+          kustomize edit set image \
+            elijahgolnik/backend-multistage=elijahgolnik/backend-multistage:${IMAGE_TAG}
 
-      # Update both images
-      - name: Update Kubernetes Deployment Images
+          kustomize edit set image \
+            elijahgolnik/frontend=elijahgolnik/frontend:${IMAGE_TAG}
+
+      - name: Deploy with Kustomize
         run: |
-          kubectl set image deployment/backend \
-            backend=elijahgolnik/backend-multistage:${IMAGE_TAG}
+          kubectl apply -k .
 
-          kubectl set image deployment/frontend \
-            frontend=elijahgolnik/frontend:${IMAGE_TAG}
-
-      # Verify successful rollouts
-      - name: Verify Deployments
+      - name: Verify deployments
         run: |
-          kubectl rollout status deployment/backend --timeout=30s
-          kubectl rollout status deployment/frontend --timeout=30s
+          kubectl rollout status deployment/backend --timeout=180s
+          kubectl rollout status deployment/frontend --timeout=180s
 
           kubectl get deployments
           kubectl get pods
-          kubectl get svc
           kubectl get ingress
+
+      
 
         
             
