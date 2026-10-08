@@ -76,8 +76,8 @@ jobs:
       # Verify successful rollouts
       - name: Verify Deployments
         run: |
-          kubectl rollout status deployment/backend --timeout=180s
-          kubectl rollout status deployment/frontend --timeout=180s
+          kubectl rollout status deployment/backend --timeout=30s
+          kubectl rollout status deployment/frontend --timeout=30s
 
           kubectl get deployments
           kubectl get pods
