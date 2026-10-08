@@ -1,0 +1,8 @@
+ingressClass:
+  enabled: true
+  name: traefik
+providers:
+  kubernetesIngress:
+    enabled: true
+service:
+  type: LoadBalancer
