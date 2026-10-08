@@ -10,45 +10,79 @@ jobs:
     runs-on: self-hosted
 
     steps:
-        - name: Checkout code
-          uses: actions/checkout@v3
-        
-        - name: Login to Docker Hub
-          uses: docker/login-action@v2
-          with:
-            username: ${{ secrets.DOCKER_USERNAME }}
-            password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Set image tag
-          run: echo "IMAGE_TAG=${GITHUB_SHA}" >> $GITHUB_ENV
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-        - name: Apply Kubernetes manifests
-          run: |
-            kubectl apply -f backend/k8s/
-            kubectl apply -f frontend/k8s/
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA}" >> "$GITHUB_ENV"
 
-        - name: Build Docker Image
-          run: docker build -t elijahgolnik/backend-multistage:${IMAGE_TAG} ./backend
+      # Build and push backend
+      - name: Build Backend Image
+        run: |
+          docker build \
+            -t elijahgolnik/backend-multistage:${IMAGE_TAG} \
+            ./backend
 
-        - name: Push image
-          run: docker push elijahgolnik/backend-multistage:${IMAGE_TAG}
+      - name: Push Backend Image
+        run: |
+          docker push elijahgolnik/backend-multistage:${IMAGE_TAG}
 
-        - name: Build Frontend Image
-          run: docker build -t elijahgolnik/frontend:${IMAGE_TAG} ./frontend
+      # Build and push frontend
+      - name: Build Frontend Image
+        run: |
+          docker build \
+            -t elijahgolnik/frontend:${IMAGE_TAG} \
+            ./frontend
 
-        - name: Push Frontend Image
-          run: docker push elijahgolnik/frontend:${IMAGE_TAG}
+      - name: Push Frontend Image
+        run: |
+          docker push elijahgolnik/frontend:${IMAGE_TAG}
 
-        - name: Set up kubectl
-          uses: azure/setup-kubectl@v3
+      # Configure Kubernetes
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
 
-        - name: Set Kubeconfig
-          run: echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+      - name: Set Kubeconfig
+        run: echo "KUBECONFIG=$HOME/.kube/config" >> "$GITHUB_ENV"
 
-        - name: Update Kubernetes Deployment Image
-          run: |
-            kubectl apply -f backend/k8s/
-            kubectl set image deployment/backend backend=elijahgolnik/backend-multistage:${IMAGE_TAG}
+      # Confirm which cluster receives the deployment
+      - name: Verify Kubernetes Connection
+        run: |
+          kubectl config current-context
+          kubectl get nodes
+          kubectl get deployments -A
+
+      # Apply configuration changes
+      - name: Apply Kubernetes Manifests
+        run: |
+          kubectl apply -f backend/k8s/
+          kubectl apply -f frontend/k8s/
+
+      # Update both images
+      - name: Update Kubernetes Deployment Images
+        run: |
+          kubectl set image deployment/backend \
+            backend=elijahgolnik/backend-multistage:${IMAGE_TAG}
+
+          kubectl set image deployment/frontend \
+            frontend=elijahgolnik/frontend:${IMAGE_TAG}
+
+      # Verify successful rollouts
+      - name: Verify Deployments
+        run: |
+          kubectl rollout status deployment/backend --timeout=180s
+          kubectl rollout status deployment/frontend --timeout=180s
+
+          kubectl get deployments
+          kubectl get pods
+          kubectl get svc
+          kubectl get ingress
 
         
             
