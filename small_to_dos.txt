@@ -1,5 +1,0 @@
-*Priority*
-- add cmd to stop container and image running on docker engine
-
-*Low Priority*
-- clean up dockerfile a bit
