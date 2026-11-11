@@ -13,7 +13,7 @@ resources:
 
 images:
   - name: elijahgolnik/backend-multistage
-    newTag: 9dd372bb688403a7713a0ebbd95691e34f795d6a
+    newTag: cba65cf567e6954fdd509d80031c9c9389957284
 
   - name: elijahgolnik/frontend
-    newTag: 9dd372bb688403a7713a0ebbd95691e34f795d6a
+    newTag: cba65cf567e6954fdd509d80031c9c9389957284

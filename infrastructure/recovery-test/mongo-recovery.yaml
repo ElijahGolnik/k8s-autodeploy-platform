@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mongo-recovery
+  namespace: recovery-test
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: mongo-recovery
+
+  template:
+    metadata:
+      labels:
+        app: mongo-recovery
+
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:8
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: recovery-storage
+              mountPath: /data/db
+
+      volumes:
+        - name: recovery-storage
+          emptyDir: {}
